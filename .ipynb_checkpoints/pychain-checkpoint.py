@@ -201,7 +201,7 @@ st.write(pychain_df)
 difficulty = st.sidebar.slider("Block Difficulty", 1, 5, 2)
 pychain.difficulty = difficulty
 
-st.sidebar.write("# Block Inspector")
+st.sidebar.write("# Block Checker")
 selected_block = st.sidebar.selectbox(
     "Which block would you like to see?", pychain.chain
 )
