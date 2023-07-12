@@ -1,4 +1,3 @@
-# PyChain Ledger
 ################################################################################
 # You’ll make the following updates to the provided Python file for this
 # Challenge, which already contains the basic `PyChain` ledger structure that
@@ -45,12 +44,13 @@ import hashlib
 # 5. Add an attribute named `amount` of type `float`.
 # Note that you’ll use this new `Record` class as the data type of your `record` attribute in the next section.
 
-
-# @TODO
 # Create a Record Data Class that consists of the `sender`, `receiver`, and
 # `amount` attributes
-# YOUR CODE HERE
-
+@dataclass
+class Record:
+    sender: str
+    receiver: str
+    amount: float
 
 ################################################################################
 # Step 2:
@@ -62,13 +62,11 @@ import hashlib
 # 1. In the `Block` class, rename the `data` attribute to `record`.
 # 2. Set the data type of the `record` attribute to `Record`.
 
-
 @dataclass
 class Block:
 
-    # @TODO
     # Rename the `data` attribute to `record`, and set the data type to `Record`
-    data: Any
+    record: Record
 
     creator_id: int
     prev_hash: str = "0"
@@ -137,13 +135,12 @@ class PyChain:
 # Streamlit Code
 
 # Adds the cache decorator for Streamlit
-
-
-@st.cache(allow_output_mutation=True)
+#@st.cache(allow_output_mutation=True)
+#@st.cache_data
+@st.cache_resource
 def setup():
     print("Initializing Chain")
     return PyChain([Block("Genesis", 0)])
-
 
 st.markdown("# PyChain")
 st.markdown("## Store a Transaction Record in the PyChain")
@@ -164,32 +161,27 @@ pychain = setup()
 # 4. Add an input area where you can get a value for `amount` from the user.
 # 5. As part of the Add Block button functionality, update `new_block` so that `Block` consists of an attribute named `record`, which is set equal to a `Record` that contains the `sender`, `receiver`, and `amount` values. The updated `Block`should also include the attributes for `creator_id` and `prev_hash`.
 
-# @TODO:
 # Delete the `input_data` variable from the Streamlit interface.
-input_data = st.text_input("Block Data")
+## input_data = st.text_input("Block Data")
 
-# @TODO:
 # Add an input area where you can get a value for `sender` from the user.
-# YOUR CODE HERE
+sender = st.text_input("Sender")
 
-# @TODO:
 # Add an input area where you can get a value for `receiver` from the user.
-# YOUR CODE HERE
+receiver = st.text_input("Receiver")
 
-# @TODO:
 # Add an input area where you can get a value for `amount` from the user.
-# YOUR CODE HERE
+amount = st.number_input("Amount")
 
 if st.button("Add Block"):
     prev_block = pychain.chain[-1]
     prev_block_hash = prev_block.hash_block()
 
-    # @TODO
     # Update `new_block` so that `Block` consists of an attribute named `record`
     # which is set equal to a `Record` that contains the `sender`, `receiver`,
     # and `amount` values
     new_block = Block(
-        data=input_data,
+        record=Record(sender, receiver, amount),
         creator_id=42,
         prev_hash=prev_block_hash
     )
@@ -208,7 +200,7 @@ st.write(pychain_df)
 difficulty = st.sidebar.slider("Block Difficulty", 1, 5, 2)
 pychain.difficulty = difficulty
 
-st.sidebar.write("# Block Inspector")
+st.sidebar.write("# Block Checker")
 selected_block = st.sidebar.selectbox(
     "Which block would you like to see?", pychain.chain
 )
